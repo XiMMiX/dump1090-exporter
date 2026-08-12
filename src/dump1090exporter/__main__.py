@@ -117,7 +117,14 @@ def main():
     if args.latitude and args.longitude:
         args.origin = (args.latitude, args.longitude)
 
-    loop = asyncio.get_event_loop()
+    try:
+        # for old asyncio versions
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        # for new asyncio versions
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    
     mon = Dump1090Exporter(
         resource_path=args.resource_path,
         host=args.host,
